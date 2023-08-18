@@ -4,17 +4,16 @@ import com.example.HotelReservation.DTOs.InsertRoomDTO;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.Models.Room;
 import com.example.HotelReservation.Repositories.HotelRepository;
+import com.example.HotelReservation.Repositories.ReservationRepository;
 import com.example.HotelReservation.Repositories.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -41,5 +40,15 @@ public class RoomService {
         Room room = new Room(roomDTO.equipment, roomDTO.price, hotel.get(), roomDTO.capacity);
         roomRepository.save(room);
         return room;
+    }
+
+    public Long deleteRoom(Long roomId) {
+        Optional<Room> room = roomRepository.findById(roomId);
+
+        if (room.isEmpty())
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "No room with that Id");
+
+        roomRepository.delete(room.get());
+        return room.get().id;
     }
 }

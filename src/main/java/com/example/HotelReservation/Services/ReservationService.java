@@ -39,4 +39,14 @@ public class ReservationService {
 
         return random.nextInt(maxRange - minRange + 1) + minRange;
     }
+
+    public int deleteReservation(Long reservationId) {
+        Optional<Reservation> reservation = reservationRepository.findById(reservationId);
+        if (reservation.isEmpty())
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "No reservation with that Id");
+
+        reservationRepository.delete(reservation.get());
+
+        return reservation.get().reservationNumber;
+    }
 }

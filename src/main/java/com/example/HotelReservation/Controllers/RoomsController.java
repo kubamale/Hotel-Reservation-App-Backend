@@ -26,4 +26,9 @@ public class RoomsController {
     public Room addRoom(@RequestBody InsertRoomDTO roomDTO){
         return roomService.createNewRoom(roomDTO);
     }
+
+    @DeleteMapping
+    public Long deleteRoom(@RequestParam Long roomId){
+        return roomService.deleteRoom(roomId);
+    }
 }

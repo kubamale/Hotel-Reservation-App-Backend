@@ -6,6 +6,7 @@ import com.example.HotelReservation.Repositories.HotelRepository;
 import com.example.HotelReservation.Services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -31,6 +32,11 @@ public class HotelsController {
     @PostMapping
     public Hotel addHotel(@RequestBody InsertHotelDTO hotelDTO){
         return hotelService.createNewHotel(hotelDTO);
+    }
+
+    @DeleteMapping
+    public String deleteHotel(@RequestParam Long hotelId){
+        return hotelService.deleteHotel(hotelId);
     }
 
 }

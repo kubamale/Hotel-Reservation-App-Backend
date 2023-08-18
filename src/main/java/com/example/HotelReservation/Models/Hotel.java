@@ -23,7 +23,7 @@ public class Hotel {
     public List<String> amenities;
     @Column
     public int ratings;
-    @OneToMany(mappedBy = "hotel")
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Room> rooms;
 
     public Hotel(String name, String description, List<String> picURL, List<String> amenities) {

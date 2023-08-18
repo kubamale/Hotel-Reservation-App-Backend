@@ -22,7 +22,7 @@ public class Room {
     @Column
     public int capacity;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<Reservation> reservations;
     @ManyToOne
     @JoinColumn(name = "Hotel_Id")

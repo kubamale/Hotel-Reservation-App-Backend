@@ -1,7 +1,4 @@
 package com.example.HotelReservation.DTOs;
-
-import jakarta.persistence.Column;
-
 import java.util.Date;
 
 public class InsertReservationDTO {
