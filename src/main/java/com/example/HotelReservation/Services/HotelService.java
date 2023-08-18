@@ -1,5 +1,6 @@
 package com.example.HotelReservation.Services;
 
+import com.example.HotelReservation.DTOs.InsertHotelDTO;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.Models.Room;
 import com.example.HotelReservation.Repositories.HotelRepository;
@@ -39,5 +40,9 @@ public class HotelService {
     }
 
 
-
+    public Hotel createNewHotel(InsertHotelDTO hotelDTO) {
+        Hotel hotel = new Hotel(hotelDTO.name, hotelDTO.description, hotelDTO.picURL, hotelDTO.amenities);
+        hotelRepository.save(hotel);
+        return hotel;
+    }
 }

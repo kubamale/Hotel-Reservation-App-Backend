@@ -12,7 +12,7 @@ public class Hotel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long Id;
+    public Long Id;
     @Column
     public String name;
     @Column
@@ -26,7 +26,7 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel")
     private Set<Room> rooms;
 
-    public Hotel(String name, String description, List<String> picURL, List<String> amenities, int ratings) {
+    public Hotel(String name, String description, List<String> picURL, List<String> amenities) {
 
         this.name = name;
         this.description = description;

@@ -19,6 +19,8 @@ public class Room {
 
     @Column
     public double price;
+    @Column
+    public int capacity;
 
     @OneToMany(mappedBy = "room")
     public Set<Reservation> reservations;
@@ -26,10 +28,11 @@ public class Room {
     @JoinColumn(name = "Hotel_Id")
     private Hotel hotel;
 
-    public Room(List<String> equipment, double price, Hotel hotel) {
+    public Room(List<String> equipment, double price, Hotel hotel, int capacity) {
         this.equipment = equipment;
         this.price = price;
         this.hotel = hotel;
+        this.capacity = capacity;
     }
 
     public Room() {

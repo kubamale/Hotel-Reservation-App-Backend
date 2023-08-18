@@ -12,6 +12,10 @@ public class Reservation {
     public Long Id;
 
     @Column
+    public String firstName;
+    @Column
+    public String lastName;
+    @Column
     public Date startDate;
     @Column
     public Date endDate;
@@ -24,7 +28,10 @@ public class Reservation {
     @JoinColumn(name = "Room_Id")
     private Room room;
 
-    public Reservation(Date startDate, Date endDate, int reservationNumber, String email, Room room) {
+
+    public Reservation(String firstName, String lastName, Date startDate, Date endDate, int reservationNumber, String email, Room room) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.reservationNumber = reservationNumber;
