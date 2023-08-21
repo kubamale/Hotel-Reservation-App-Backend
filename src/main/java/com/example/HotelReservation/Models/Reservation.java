@@ -1,5 +1,6 @@
 package com.example.HotelReservation.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -26,6 +27,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "Room_Id")
+    @JsonBackReference
     private Room room;
 
 
@@ -40,5 +42,9 @@ public class Reservation {
     }
 
     public Reservation() {
+    }
+
+    public Room getRoom() {
+        return room;
     }
 }

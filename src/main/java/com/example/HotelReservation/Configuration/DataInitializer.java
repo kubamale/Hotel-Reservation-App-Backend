@@ -29,8 +29,8 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
 
-        Hotel hotel1 = new Hotel("test1", "test1 des1", new ArrayList<>(Arrays.asList("element1", "element2", "element3")),new ArrayList<>(Arrays.asList("element1", "element2", "element3")));
-        Hotel hotel2 = new Hotel("test2", "test2 des2", new ArrayList<>(Arrays.asList("element1", "element2", "element3")),new ArrayList<>(Arrays.asList("element1", "element2", "element3")));
+        Hotel hotel1 = new Hotel("Poland", "Warsaw", "01-000", "Znana", "134a", "+48999999999", "exampleemail@exam.com","test1", "test1 des1", new ArrayList<>(Arrays.asList("element1", "element2", "element3")),new ArrayList<>(Arrays.asList("element1", "element2", "element3")));
+        Hotel hotel2 = new Hotel("Poland", "Warsaw", "01-000", "Znana", "134a", "+48999999999", "exampleemail@exam.com","test2", "test2 des2", new ArrayList<>(Arrays.asList("element1", "element2", "element3")),new ArrayList<>(Arrays.asList("element1", "element2", "element3")));
 
         Room room1 = new Room( new ArrayList<>(Arrays.asList("equipment1", "equipment2", "equipment3")), 123.00, hotel1, 3);
         Room room2 = new Room( new ArrayList<>(Arrays.asList("equipment1", "equipment3")), 163.00, hotel2, 5);

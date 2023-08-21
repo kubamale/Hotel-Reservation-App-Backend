@@ -1,5 +1,7 @@
 package com.example.HotelReservation.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -23,9 +25,11 @@ public class Room {
     public int capacity;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     public Set<Reservation> reservations;
     @ManyToOne
     @JoinColumn(name = "Hotel_Id")
+    @JsonBackReference
     private Hotel hotel;
 
     public Room(List<String> equipment, double price, Hotel hotel, int capacity) {
@@ -46,5 +50,7 @@ public class Room {
         return true;
     }
 
-
+    public Hotel getHotel() {
+        return hotel;
+    }
 }

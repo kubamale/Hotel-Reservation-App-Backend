@@ -47,7 +47,8 @@ public class RoomService {
 
         if (room.isEmpty())
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "No room with that Id");
-
+        if(!room.get().reservations.isEmpty())
+            throw new ResponseStatusException(HttpStatusCode.valueOf(405), "You cant delete this room there are reservations for it");
         roomRepository.delete(room.get());
         return room.get().id;
     }

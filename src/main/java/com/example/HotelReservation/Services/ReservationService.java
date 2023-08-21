@@ -1,6 +1,7 @@
 package com.example.HotelReservation.Services;
 
 import com.example.HotelReservation.DTOs.InsertReservationDTO;
+import com.example.HotelReservation.Email.EmailService;
 import com.example.HotelReservation.Models.Reservation;
 import com.example.HotelReservation.Models.Room;
 import com.example.HotelReservation.Repositories.ReservationRepository;
@@ -19,6 +20,8 @@ public class ReservationService {
     RoomRepository roomRepository;
     @Autowired
     ReservationRepository reservationRepository;
+    @Autowired
+    EmailService emailService;
     public Reservation createReservation(InsertReservationDTO reservationDTO) {
 
         Optional<Room> room = roomRepository.findById(reservationDTO.roomId);
@@ -28,6 +31,7 @@ public class ReservationService {
 
         Reservation reservation = new Reservation(reservationDTO.firstName, reservationDTO.lastName, reservationDTO.startDate, reservationDTO.endDate, generateReservationNumber(), reservationDTO.email, room.get());
         reservationRepository.save(reservation);
+        emailService.notifyAboutPlacingReservation(reservation);
         return reservation;
     }
 
@@ -46,7 +50,7 @@ public class ReservationService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "No reservation with that Id");
 
         reservationRepository.delete(reservation.get());
-
+        emailService.notifyAboutCancellingReservation(reservation.get());
         return reservation.get().reservationNumber;
     }
 }

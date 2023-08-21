@@ -18,8 +18,6 @@ public class HotelService {
 
     @Autowired
     HotelRepository hotelRepository;
-    @Autowired
-    EmailService emailService;
 
     public List<Hotel> getAllHotels() {
         return hotelRepository.findAll();
@@ -45,7 +43,7 @@ public class HotelService {
 
 
     public Hotel createNewHotel(InsertHotelDTO hotelDTO) {
-        Hotel hotel = new Hotel(hotelDTO.name, hotelDTO.description, hotelDTO.picURL, hotelDTO.amenities);
+        Hotel hotel = new Hotel(hotelDTO.country, hotelDTO.city, hotelDTO.postalCode, hotelDTO.street, hotelDTO.streetNumber, hotelDTO.phoneNumber, hotelDTO.email,hotelDTO.name, hotelDTO.description, hotelDTO.picURL, hotelDTO.amenities);
         hotelRepository.save(hotel);
         return hotel;
     }
@@ -56,9 +54,19 @@ public class HotelService {
         if(hotel.isEmpty())
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "no hotel With that Id");
         List<Reservation> reservationsToDelete = hotel.get().getRooms().stream().flatMap(room -> room.reservations.stream()).toList();
+        boolean hasReservation = false;
+        for (Room room : hotel.get().getRooms()){
+            if (!room.reservations.isEmpty()){
+                hasReservation = true;
+                break;
+            }
+
+        }
+
+        if (hasReservation)
+            throw new ResponseStatusException(HttpStatusCode.valueOf(405), "You cant delete this hotel there are reservations for it");
 
         hotelRepository.delete(hotel.get());
-        emailService.sendSimpleEmail("kubamalewicztest@gmail.com", "test", "test text");
 
         return hotel.get().name;
 

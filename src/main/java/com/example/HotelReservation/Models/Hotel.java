@@ -1,5 +1,6 @@
 package com.example.HotelReservation.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jdk.dynalink.linker.LinkerServices;
 
@@ -14,6 +15,20 @@ public class Hotel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long Id;
     @Column
+    public String country;
+    @Column
+    public String city;
+    @Column
+    public String postalCode;
+    @Column
+    public String street;
+    @Column
+    public String streetNumber;
+    @Column
+    public String phoneNumber;
+    @Column
+    public String email;
+    @Column
     public String name;
     @Column
     public String description;
@@ -24,15 +39,21 @@ public class Hotel {
     @Column
     public int ratings;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Room> rooms;
 
-    public Hotel(String name, String description, List<String> picURL, List<String> amenities) {
-
+    public Hotel(String country, String city, String postalCode, String street, String streetNumber, String phoneNumber, String email, String name, String description, List<String> picURL, List<String> amenities) {
+        this.country = country;
+        this.city = city;
+        this.postalCode = postalCode;
+        this.street = street;
+        this.streetNumber = streetNumber;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
         this.name = name;
         this.description = description;
         this.picURL = picURL;
         this.amenities = amenities;
-        this.ratings = ratings;
     }
 
     public Hotel() {
