@@ -32,6 +32,7 @@ public class ReservationService {
         Reservation reservation = new Reservation(reservationDTO.firstName, reservationDTO.lastName, reservationDTO.startDate, reservationDTO.endDate, generateReservationNumber(), reservationDTO.email, room.get());
         reservationRepository.save(reservation);
         emailService.notifyAboutPlacingReservation(reservation);
+        System.out.println("mail sie powinien zaraz wysłąć");
         return reservation;
     }
 

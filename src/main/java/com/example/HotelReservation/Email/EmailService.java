@@ -6,15 +6,14 @@ import com.example.HotelReservation.Models.Room;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -26,29 +25,38 @@ public class EmailService{
     }
 
 
+    @Async
     public void notifyAboutCancellingReservation(Reservation reservation){
-        String subject = "Canceling reservation: " + reservation.reservationNumber;
-        String content = HTMLCancellingReservationEmailTemplate(reservation);
-        sendSimpleEmail(reservation, subject, content);
+
+            String subject = "Canceling reservation: " + reservation.reservationNumber;
+            String content = HTMLCancellingReservationEmailTemplate(reservation);
+            sendSimpleEmail(reservation, subject, content);
+
     }
 
+    @Async
     public void notifyAboutPlacingReservation(Reservation reservation){
-        String subject = "Your reservation is complete!";
-        String content = HTMLPlacingReservationEmailTemplate(reservation);
-        sendSimpleEmail(reservation, subject, content);
+
+            String subject = "Your reservation is complete!";
+            String content = HTMLPlacingReservationEmailTemplate(reservation);
+            sendSimpleEmail(reservation, subject, content);
+
     }
+
+
 
     private void sendSimpleEmail(Reservation reservations, String subject, String content) {
 
-        MimeMessage message = mailSender.createMimeMessage();
-        try {
-            message.setRecipients(Message.RecipientType.TO, reservations.email);
-            message.setSubject(subject);
-            message.setContent(content, "text/html; charset=utf-8" );
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+            MimeMessage message = mailSender.createMimeMessage();
+            try {
+                message.setRecipients(Message.RecipientType.TO, reservations.email);
+                message.setSubject(subject);
+                message.setContent(content, "text/html; charset=utf-8");
+                mailSender.send(message);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        System.out.println("mail wysłany");
 
     }
 
