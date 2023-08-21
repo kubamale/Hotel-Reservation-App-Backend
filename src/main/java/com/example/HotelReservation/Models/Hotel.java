@@ -32,6 +32,7 @@ public class Hotel {
     @Column
     public String name;
     @Column
+    @Lob
     public String description;
     @Column
     public List<String> picURL;
