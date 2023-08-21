@@ -1,7 +1,6 @@
 package com.example.HotelReservation.Services;
 
-import com.example.HotelReservation.DTOs.InsertHotelDTO;
-import com.example.HotelReservation.Email.EmailService;
+import com.example.HotelReservation.DTOs.HotelDTO;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.Models.Reservation;
 import com.example.HotelReservation.Models.Room;
@@ -19,11 +18,11 @@ public class HotelService {
     @Autowired
     HotelRepository hotelRepository;
 
-    public List<Hotel> getAllHotels() {
-        return hotelRepository.findAll();
+    public List<HotelDTO> getAllHotels() {
+        return hotelRepository.findAll().stream().map(Hotel::mapToDTO).toList();
     }
 
-    public List<Hotel> GetAvailableHotels(Date startDate, Date endDate) {
+    public List<HotelDTO> GetAvailableHotels(Date startDate, Date endDate) {
         List<Hotel> allHotels = hotelRepository.findAll();
         List<Hotel> availableHotels = new ArrayList<>();
         for (Hotel hotel : allHotels) {
@@ -38,11 +37,13 @@ public class HotelService {
                 availableHotels.add(hotel);
         }
 
-        return availableHotels;
+        return availableHotels.stream().map(Hotel::mapToDTO).toList();
     }
 
 
-    public Hotel createNewHotel(InsertHotelDTO hotelDTO) {
+
+
+    public Hotel createNewHotel(HotelDTO hotelDTO) {
         Hotel hotel = new Hotel(hotelDTO.country, hotelDTO.city, hotelDTO.postalCode, hotelDTO.street, hotelDTO.streetNumber, hotelDTO.phoneNumber, hotelDTO.email,hotelDTO.name, hotelDTO.description, hotelDTO.picURL, hotelDTO.amenities);
         hotelRepository.save(hotel);
         return hotel;

@@ -1,5 +1,6 @@
 package com.example.HotelReservation.Models;
 
+import com.example.HotelReservation.DTOs.HotelDTO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jdk.dynalink.linker.LinkerServices;
@@ -62,5 +63,11 @@ public class Hotel {
 
     public Set<Room> getRooms() {
         return rooms;
+    }
+
+    public static HotelDTO mapToDTO(Hotel hotel){
+        return new HotelDTO(hotel.country, hotel.city, hotel.postalCode,
+                hotel.street, hotel.streetNumber, hotel.phoneNumber, hotel.email,
+                hotel.name, hotel.description, hotel.picURL, hotel.amenities);
     }
 }

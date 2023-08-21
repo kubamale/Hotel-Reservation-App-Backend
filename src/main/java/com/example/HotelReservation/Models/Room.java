@@ -1,5 +1,6 @@
 package com.example.HotelReservation.Models;
 
+import com.example.HotelReservation.DTOs.RoomDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -52,5 +53,9 @@ public class Room {
 
     public Hotel getHotel() {
         return hotel;
+    }
+
+    public static RoomDTO mapToDTO(Room room){
+        return new RoomDTO(room.equipment, room.price, room.hotel.Id, room.capacity);
     }
 }

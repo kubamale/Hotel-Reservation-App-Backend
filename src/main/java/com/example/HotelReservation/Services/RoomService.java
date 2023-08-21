@@ -1,10 +1,9 @@
 package com.example.HotelReservation.Services;
 
-import com.example.HotelReservation.DTOs.InsertRoomDTO;
+import com.example.HotelReservation.DTOs.RoomDTO;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.Models.Room;
 import com.example.HotelReservation.Repositories.HotelRepository;
-import com.example.HotelReservation.Repositories.ReservationRepository;
 import com.example.HotelReservation.Repositories.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -23,15 +22,14 @@ public class RoomService {
     @Autowired
     HotelRepository hotelRepository;
 
-    public List<Room> getRoomsForHotel(Long id, Date startDate, Date endDate){
+    public List<RoomDTO> getRoomsForHotel(Long id, Date startDate, Date endDate){
         List<Room> allRooms = roomRepository.findRoomsById(id);
 
-        List<Room> availableRooms = allRooms.stream().filter(room -> room.isRoomAvailable(startDate, endDate)).toList();
-
-        return availableRooms;
+        return allRooms.stream().filter(room -> room.isRoomAvailable(startDate, endDate))
+                .map(Room::mapToDTO).toList();
     }
 
-    public Room createNewRoom(InsertRoomDTO roomDTO) {
+    public Room createNewRoom(RoomDTO roomDTO) {
         Optional<Hotel> hotel = hotelRepository.findById(roomDTO.hotelId);
         if (hotel.isEmpty()){
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "no hotel with that Id");

@@ -1,6 +1,6 @@
 package com.example.HotelReservation.Services;
 
-import com.example.HotelReservation.DTOs.InsertReservationDTO;
+import com.example.HotelReservation.DTOs.ReservationDTO;
 import com.example.HotelReservation.Email.EmailService;
 import com.example.HotelReservation.Models.Reservation;
 import com.example.HotelReservation.Models.Room;
@@ -22,7 +22,7 @@ public class ReservationService {
     ReservationRepository reservationRepository;
     @Autowired
     EmailService emailService;
-    public Reservation createReservation(InsertReservationDTO reservationDTO) {
+    public Reservation createReservation(ReservationDTO reservationDTO) {
 
         Optional<Room> room = roomRepository.findById(reservationDTO.roomId);
         if (room.isEmpty())
