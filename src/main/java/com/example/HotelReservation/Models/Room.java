@@ -45,7 +45,8 @@ public class Room {
 
     public boolean isRoomAvailable(Date startDate, Date endDate){
         for (Reservation res: reservations) {
-            if ((res.startDate.after(startDate) && res.startDate.before(endDate)) || (res.endDate.after(startDate) && res.endDate.before(endDate)))
+            System.out.println("======================= " + res.reservationNumber);
+            if ((startDate.after(res.startDate) && startDate.before(res.endDate)) || (endDate.after(res.startDate) && endDate.before(res.endDate)))
                 return false;
         }
         return true;

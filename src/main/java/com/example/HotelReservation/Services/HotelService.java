@@ -30,6 +30,7 @@ public class HotelService {
             for (Room room : hotel.getRooms()){
                 if (!room.isRoomAvailable(startDate, endDate)) {
                     canAddHotel = false;
+
                     break;
                 }
             }

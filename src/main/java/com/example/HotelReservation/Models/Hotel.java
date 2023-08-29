@@ -42,7 +42,7 @@ public class Hotel {
     public int ratings;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<Room> rooms;
+    public Set<Room> rooms;
 
     public Hotel(String country, String city, String postalCode, String street, String streetNumber, String phoneNumber, String email, String name, String description, List<String> picURL, List<String> amenities) {
         this.country = country;
