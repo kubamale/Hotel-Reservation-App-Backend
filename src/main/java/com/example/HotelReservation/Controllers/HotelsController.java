@@ -1,7 +1,8 @@
 package com.example.HotelReservation.Controllers;
 
+import com.example.HotelReservation.DTOs.HotelGetDTO;
 import com.example.HotelReservation.Models.Hotel;
-import com.example.HotelReservation.DTOs.HotelDTO;
+import com.example.HotelReservation.DTOs.CreateHotelDTO;
 import com.example.HotelReservation.Services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +17,23 @@ public class HotelsController {
     @Autowired
     HotelService hotelService;
     @GetMapping
-    public List<HotelDTO> getAllHotels(){
+    public List<HotelGetDTO> getAllHotels(){
         return hotelService.getAllHotels();
     }
 
     @GetMapping("/date")
-    public List<HotelDTO> getHotelsBetweenDates(@RequestParam String startDate, @RequestParam String endDate){
+    public List<HotelGetDTO> getHotelsBetweenDates(@RequestParam String startDate, @RequestParam String endDate){
         System.out.println("==================================\n " + startDate + " | " + endDate);
         return hotelService.GetAvailableHotels(Date.valueOf(startDate), Date.valueOf(endDate));
     }
 
+    @GetMapping("/details")
+    public HotelGetDTO getHotel(@RequestParam Long id){
+        return hotelService.getHotel(id);
+    }
+
     @PostMapping
-    public Hotel addHotel(@RequestBody HotelDTO hotelDTO){
+    public Hotel addHotel(@RequestBody CreateHotelDTO hotelDTO){
         return hotelService.createNewHotel(hotelDTO);
     }
 

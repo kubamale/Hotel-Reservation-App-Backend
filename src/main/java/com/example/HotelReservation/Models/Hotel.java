@@ -1,9 +1,9 @@
 package com.example.HotelReservation.Models;
 
-import com.example.HotelReservation.DTOs.HotelDTO;
+import com.example.HotelReservation.DTOs.CreateHotelDTO;
+import com.example.HotelReservation.DTOs.HotelGetDTO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jdk.dynalink.linker.LinkerServices;
 
 import java.util.List;
 import java.util.Set;
@@ -66,8 +66,8 @@ public class Hotel {
         return rooms;
     }
 
-    public static HotelDTO mapToDTO(Hotel hotel){
-        return new HotelDTO(hotel.country, hotel.city, hotel.postalCode,
+    public static HotelGetDTO mapToDTO(Hotel hotel){
+        return new HotelGetDTO(hotel.Id,hotel.country, hotel.city, hotel.postalCode,
                 hotel.street, hotel.streetNumber, hotel.phoneNumber, hotel.email,
                 hotel.name, hotel.description, hotel.picURL, hotel.amenities);
     }
