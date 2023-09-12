@@ -22,5 +22,5 @@ public class User {
     @Column(nullable = false)
     private String login;
     @Column(nullable = false)
-    private String token;
+    private String password;
 }
