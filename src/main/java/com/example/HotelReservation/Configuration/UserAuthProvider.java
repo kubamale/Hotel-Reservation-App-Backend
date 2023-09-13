@@ -5,23 +5,30 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.HotelReservation.DTOs.UserDTO;
+import com.example.HotelReservation.Exceptions.AppException;
+import com.example.HotelReservation.Models.BlackListToken;
+import com.example.HotelReservation.Repositories.TokenRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.swing.text.html.Option;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
 public class UserAuthProvider {
 
+    private final TokenRepository tokenRepository;
     @Value("${security.jwt.token.secret-key:secret-key}")
     private String secretKey;
 
@@ -44,6 +51,11 @@ public class UserAuthProvider {
     }
 
     public Authentication validateToken(String token){
+
+        if (isTokenDisabled(token)){
+            throw new AppException("Your Session has expired please Log in", HttpStatus.UNAUTHORIZED);
+        }
+
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         JWTVerifier verifier = JWT.require(algorithm).build();
 
@@ -54,7 +66,14 @@ public class UserAuthProvider {
                 .lastName(decoded.getClaim("lastName").asString())
                 .build();
 
+
         return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
 
+    }
+
+    private boolean isTokenDisabled(String token){
+        Optional<BlackListToken> oToken = tokenRepository.getBlackListedTokenByToken(token);
+
+        return oToken.isPresent();
     }
 }

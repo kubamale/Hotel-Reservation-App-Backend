@@ -36,4 +36,9 @@ public class AuthController {
         user.setToken(userAuthProvider.CreateToken(user));
         return ResponseEntity.created(URI.create("/users/" + user.getId())).body(user);
     }
+
+//    @PostMapping("/logout")
+//    public ResponseEntity<String> logout(@RequestBody String token){
+//        return userService.logout(token);
+//    }
 }

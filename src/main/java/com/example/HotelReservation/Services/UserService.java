@@ -5,11 +5,14 @@ import com.example.HotelReservation.DTOs.SignUpDTO;
 import com.example.HotelReservation.DTOs.UserDTO;
 import com.example.HotelReservation.Exceptions.AppException;
 import com.example.HotelReservation.Mappers.UserMapper;
+import com.example.HotelReservation.Models.BlackListToken;
 import com.example.HotelReservation.Models.User;
+import com.example.HotelReservation.Repositories.TokenRepository;
 import com.example.HotelReservation.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.firewall.RequestRejectedException;
@@ -22,6 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
@@ -49,5 +53,11 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return userMapper.toUserDTO(savedUser);
+    }
+
+    public ResponseEntity<String> logout(String token) {
+
+        tokenRepository.save(new BlackListToken(token));
+        return ResponseEntity.ok("Logged out");
     }
 }
