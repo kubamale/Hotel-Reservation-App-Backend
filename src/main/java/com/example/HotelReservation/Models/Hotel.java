@@ -2,6 +2,7 @@ package com.example.HotelReservation.Models;
 
 import com.example.HotelReservation.DTOs.CreateHotelDTO;
 import com.example.HotelReservation.DTOs.HotelGetDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -43,8 +44,12 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     public Set<Room> rooms;
+    @ManyToOne
+    @JoinColumn(name = "User_Id")
+    @JsonBackReference
+    private User user;
 
-    public Hotel(String country, String city, String postalCode, String street, String streetNumber, String phoneNumber, String email, String name, String description, List<String> picURL, List<String> amenities) {
+    public Hotel(String country, String city, String postalCode, String street, String streetNumber, String phoneNumber, String email, String name, String description, List<String> picURL, List<String> amenities, User user) {
         this.country = country;
         this.city = city;
         this.postalCode = postalCode;
@@ -56,6 +61,7 @@ public class Hotel {
         this.description = description;
         this.picURL = picURL;
         this.amenities = amenities;
+        this.user = user;
     }
 
     public Hotel() {

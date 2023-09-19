@@ -1,7 +1,10 @@
 package com.example.HotelReservation.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +26,8 @@ public class User {
     private String login;
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    public Set<Hotel> hotels;
 }

@@ -76,4 +76,8 @@ public class UserAuthProvider {
 
         return oToken.isPresent();
     }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
 }

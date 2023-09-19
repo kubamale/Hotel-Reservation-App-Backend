@@ -1,23 +1,34 @@
 package com.example.HotelReservation.Configuration;
 
+import com.example.HotelReservation.DTOs.SignUpDTO;
+import com.example.HotelReservation.Exceptions.AppException;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.Models.Reservation;
 import com.example.HotelReservation.Models.Room;
+import com.example.HotelReservation.Models.User;
 import com.example.HotelReservation.Repositories.HotelRepository;
 import com.example.HotelReservation.Repositories.ReservationRepository;
 import com.example.HotelReservation.Repositories.RoomRepository;
+import com.example.HotelReservation.Repositories.UserRepository;
+import com.example.HotelReservation.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
 
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    UserService userService;
     @Autowired
     HotelRepository hotelRepository;
     @Autowired
@@ -27,7 +38,13 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        SignUpDTO user = new SignUpDTO("User", "User", "user@ex.com", "password".toCharArray());
+        userService.register(user);
 
+        Optional<User> oUser = userRepository.findByLogin(user.login());
+        if (oUser.isEmpty()){
+            throw new AppException("Error initializing user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         String desc = "W obiekcie Amicus przysługuje Ci zniżka Genius! Aby zaoszczędzić w tym obiekcie, wystarczy, że się zalogujesz.\n" +
                 "\n" +
@@ -54,8 +71,8 @@ public class DataInitializer implements CommandLineRunner {
                         "https://u.profitroom.pl/2018-binkowskihotel-pl/thumb/1200x630/uploads/binkowski_8_1.jpg",
                         "https://www.hotel.bialowieza.pl/_thumb/650x500x80/banery/OPT-POKOJE%20BUSSINESS/3q1a3748.jpg",
                         "https://u.profitroom.pl/2018-binkowskihotel-pl/thumb/1200x630/uploads/binkowski_8_1.jpg",
-                        "https://www.hotel.bialowieza.pl/_thumb/650x500x80/banery/OPT-POKOJE%20BUSSINESS/3q1a3748.jpg")),new ArrayList<>(Arrays.asList("Double bed", "Bathroom", "Stove", "Bath tab", "Swimming Pool")));
-        Hotel hotel2 = new Hotel("Poland", "Warsaw", "01-000", "Znana", "134a", "+48999999999", "exampleemail@exam.com","test2", "test2 des2", new ArrayList<>(Arrays.asList("https://www.hotel.bialowieza.pl/_thumb/650x500x80/banery/OPT-POKOJE%20BUSSINESS/3q1a3748.jpg")),new ArrayList<>(Arrays.asList("element1", "element2", "element3")));
+                        "https://www.hotel.bialowieza.pl/_thumb/650x500x80/banery/OPT-POKOJE%20BUSSINESS/3q1a3748.jpg")),new ArrayList<>(Arrays.asList("Double bed", "Bathroom", "Stove", "Bath tab", "Swimming Pool")),oUser.get());
+        Hotel hotel2 = new Hotel("Poland", "Warsaw", "01-000", "Znana", "134a", "+48999999999", "exampleemail@exam.com","test2", "test2 des2", new ArrayList<>(Arrays.asList("https://www.hotel.bialowieza.pl/_thumb/650x500x80/banery/OPT-POKOJE%20BUSSINESS/3q1a3748.jpg")),new ArrayList<>(Arrays.asList("element1", "element2", "element3")), oUser.get());
 
         Room room1 = new Room( new ArrayList<>(Arrays.asList("equipment1", "equipment2", "equipment3")), 123.00, hotel1, 3);
         Room room2 = new Room( new ArrayList<>(Arrays.asList("equipment1", "equipment3")), 163.00, hotel2, 5);

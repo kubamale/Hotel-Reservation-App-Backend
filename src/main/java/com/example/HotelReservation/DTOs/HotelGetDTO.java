@@ -16,7 +16,6 @@ public class HotelGetDTO {
     public List<String> picURL;
     public List<String> amenities;
 
-
     public HotelGetDTO() {
     }
 

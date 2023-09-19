@@ -2,11 +2,15 @@ package com.example.HotelReservation.Services;
 
 import com.example.HotelReservation.DTOs.CreateHotelDTO;
 import com.example.HotelReservation.DTOs.HotelGetDTO;
+import com.example.HotelReservation.Exceptions.AppException;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.Models.Reservation;
 import com.example.HotelReservation.Models.Room;
+import com.example.HotelReservation.Models.User;
 import com.example.HotelReservation.Repositories.HotelRepository;
+import com.example.HotelReservation.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,6 +22,8 @@ public class HotelService {
 
     @Autowired
     HotelRepository hotelRepository;
+    @Autowired
+    UserRepository userRepository;
 
     public List<HotelGetDTO> getAllHotels() {
         return hotelRepository.findAll().stream().map(Hotel::mapToDTO).toList();
@@ -46,7 +52,13 @@ public class HotelService {
 
 
     public Hotel createNewHotel(CreateHotelDTO hotelDTO) {
-        Hotel hotel = new Hotel(hotelDTO.country, hotelDTO.city, hotelDTO.postalCode, hotelDTO.street, hotelDTO.streetNumber, hotelDTO.phoneNumber, hotelDTO.email,hotelDTO.name, hotelDTO.description, hotelDTO.picURL, hotelDTO.amenities);
+        Optional<User> oUser = userRepository.findById(hotelDTO.userId);
+
+        if (oUser.isEmpty()){
+            throw new AppException("No user with that Id " + hotelDTO.userId, HttpStatus.BAD_REQUEST);
+        }
+
+        Hotel hotel = new Hotel(hotelDTO.country, hotelDTO.city, hotelDTO.postalCode, hotelDTO.street, hotelDTO.streetNumber, hotelDTO.phoneNumber, hotelDTO.email,hotelDTO.name, hotelDTO.description, hotelDTO.picURL, hotelDTO.amenities, oUser.get());
         hotelRepository.save(hotel);
         return hotel;
     }

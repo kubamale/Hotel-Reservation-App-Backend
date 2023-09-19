@@ -16,8 +16,6 @@ import java.net.URI;
 @RestController
 public class AuthController {
 
-
-
     @Autowired
     private UserService userService;
     @Autowired

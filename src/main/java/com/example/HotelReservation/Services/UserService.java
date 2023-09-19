@@ -1,5 +1,10 @@
 package com.example.HotelReservation.Services;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.HotelReservation.Configuration.UserAuthProvider;
 import com.example.HotelReservation.DTOs.CredentialsDTO;
 import com.example.HotelReservation.DTOs.SignUpDTO;
 import com.example.HotelReservation.DTOs.UserDTO;
@@ -25,6 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final UserAuthProvider userAuthProvider;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -39,7 +45,7 @@ public class UserService {
 
         }
 
-        throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
+        throw new AppException("Invalid password", HttpStatus.UNAUTHORIZED);
     }
 
     public UserDTO register(SignUpDTO signUpDTO) {
@@ -60,4 +66,5 @@ public class UserService {
         tokenRepository.save(new BlackListToken(token));
         return ResponseEntity.ok("Logged out");
     }
+
 }
