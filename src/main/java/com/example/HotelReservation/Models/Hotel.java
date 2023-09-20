@@ -5,12 +5,14 @@ import com.example.HotelReservation.DTOs.HotelGetDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "Hotel")
+@Getter
 public class Hotel {
 
     @Id

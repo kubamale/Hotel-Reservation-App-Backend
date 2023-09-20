@@ -35,8 +35,4 @@ public class AuthController {
         return ResponseEntity.created(URI.create("/users/" + user.getId())).body(user);
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<String> logout(@RequestBody String token){
-//        return userService.logout(token);
-//    }
 }

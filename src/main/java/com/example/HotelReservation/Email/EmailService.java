@@ -3,6 +3,7 @@ package com.example.HotelReservation.Email;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.Models.Reservation;
 import com.example.HotelReservation.Models.Room;
+import com.example.HotelReservation.Models.User;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -30,7 +31,7 @@ public class EmailService{
 
             String subject = "Canceling reservation: " + reservation.reservationNumber;
             String content = HTMLCancellingReservationEmailTemplate(reservation);
-            sendSimpleEmail(reservation, subject, content);
+            sendSimpleEmailAboutReservation(reservation, subject, content);
 
     }
 
@@ -39,13 +40,13 @@ public class EmailService{
 
             String subject = "Your reservation is complete!";
             String content = HTMLPlacingReservationEmailTemplate(reservation);
-            sendSimpleEmail(reservation, subject, content);
+            sendSimpleEmailAboutReservation(reservation, subject, content);
 
     }
 
 
 
-    private void sendSimpleEmail(Reservation reservations, String subject, String content) {
+    private void sendSimpleEmailAboutReservation(Reservation reservations, String subject, String content) {
 
             MimeMessage message = mailSender.createMimeMessage();
             try {
@@ -56,7 +57,7 @@ public class EmailService{
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
-        System.out.println("mail wysłany");
+
 
     }
 
@@ -95,5 +96,51 @@ public class EmailService{
                 "<h3>With regards</h3>" +
                 "<p>" +reservation.getRoom().getHotel().name + " team.</p>";
     }
+
+
+    @Async
+    public void sendWelcomeEmail(User user){
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            message.setRecipients(Message.RecipientType.TO, user.getLogin());
+            message.setSubject("Welcome to Chillout.com!!!");
+            message.setContent(getWelcomeMessage(user), "text/html; charset=utf-8");
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getWelcomeMessage(User user) {
+        return "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                "    <title>Welcome to Chillout.com</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <table align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"600\">\n" +
+                "        <tr>\n" +
+                "            <td align=\"center\" bgcolor=\"#ffffff\">\n" +
+                "                <h1>Welcome to Chillout.com!</h1>\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "        <tr>\n" +
+                "            <td bgcolor=\"#ffffff\">\n" +
+                "                <p>Thank you for registering on our website. We're glad to have you on board!</p>\n" +
+                "                <p>You can now enjoy access to our fantastic features and resources. Start your journey with us today.</p>\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "        <tr>\n" +
+                "            <td bgcolor=\"#ffffff\" align=\"center\">\n" +
+                "                <a href=\"http://localhost:4200/\">Get Started</a>\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "    </table>\n" +
+                "</body>\n" +
+                "</html>";
+    }
+
 
 }

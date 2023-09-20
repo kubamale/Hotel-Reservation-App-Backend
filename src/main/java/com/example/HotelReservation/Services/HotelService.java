@@ -12,6 +12,7 @@ import com.example.HotelReservation.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -93,5 +94,13 @@ public class HotelService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "no hotel With that Id");
 
         return Hotel.mapToDTO(hotel.get());
+    }
+
+    public ResponseEntity<List<HotelGetDTO>> getUsersHotels(long id) {
+        List<Hotel> hotels = hotelRepository.findAll().stream().filter((hotel) -> hotel.getUser().getId() == id).toList();
+
+
+
+        return ResponseEntity.ok(hotels.stream().map(Hotel::mapToDTO).toList());
     }
 }

@@ -8,6 +8,7 @@ import com.example.HotelReservation.Configuration.UserAuthProvider;
 import com.example.HotelReservation.DTOs.CredentialsDTO;
 import com.example.HotelReservation.DTOs.SignUpDTO;
 import com.example.HotelReservation.DTOs.UserDTO;
+import com.example.HotelReservation.Email.EmailService;
 import com.example.HotelReservation.Exceptions.AppException;
 import com.example.HotelReservation.Mappers.UserMapper;
 import com.example.HotelReservation.Models.BlackListToken;
@@ -30,6 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final EmailService emailService;
     private final UserAuthProvider userAuthProvider;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
@@ -57,7 +59,7 @@ public class UserService {
         User user = userMapper.signUpToUser(signUpDTO);
         user.setPassword(passwordEncoder.encode(CharBuffer.wrap(signUpDTO.password())));
         User savedUser = userRepository.save(user);
-
+        emailService.sendWelcomeEmail(savedUser);
         return userMapper.toUserDTO(savedUser);
     }
 
@@ -67,4 +69,14 @@ public class UserService {
         return ResponseEntity.ok("Logged out");
     }
 
+
+    public ResponseEntity<UserDTO> getUserDetails(long id) {
+
+        Optional<User> oUser = userRepository.findById(id);
+
+        if (oUser.isEmpty())
+            throw new AppException("no user with id " + id, HttpStatus.BAD_REQUEST);
+
+        return ResponseEntity.ok(userMapper.toUserDTO(oUser.get()));
+    }
 }

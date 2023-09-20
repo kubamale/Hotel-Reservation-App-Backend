@@ -5,6 +5,7 @@ import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.DTOs.CreateHotelDTO;
 import com.example.HotelReservation.Services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -40,6 +41,11 @@ public class HotelsController {
     @DeleteMapping
     public String deleteHotel(@RequestParam Long hotelId){
         return hotelService.deleteHotel(hotelId);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<HotelGetDTO>> getUsersHotel(@RequestParam long id){
+        return hotelService.getUsersHotels(id);
     }
 
 }
