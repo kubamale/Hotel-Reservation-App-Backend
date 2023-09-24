@@ -9,6 +9,7 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "Hotel")
@@ -39,8 +40,8 @@ public class Hotel {
     public String description;
     @Column
     public List<String> picURL;
-    @Column
-    public List<String> amenities;
+    @ManyToMany
+    public Set<Amenities> amenities;
     @Column
     public int ratings;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -51,7 +52,7 @@ public class Hotel {
     @JsonBackReference
     private User user;
 
-    public Hotel(String country, String city, String postalCode, String street, String streetNumber, String phoneNumber, String email, String name, String description, List<String> picURL, List<String> amenities, User user) {
+    public Hotel(String country, String city, String postalCode, String street, String streetNumber, String phoneNumber, String email, String name, String description, List<String> picURL, Set<Amenities> amenities, User user) {
         this.country = country;
         this.city = city;
         this.postalCode = postalCode;
@@ -77,6 +78,6 @@ public class Hotel {
     public static HotelGetDTO mapToDTO(Hotel hotel){
         return new HotelGetDTO(hotel.Id,hotel.country, hotel.city, hotel.postalCode,
                 hotel.street, hotel.streetNumber, hotel.phoneNumber, hotel.email,
-                hotel.name, hotel.description, hotel.picURL, hotel.amenities);
+                hotel.name, hotel.description, hotel.picURL, hotel.amenities.stream().map(Amenities::mapToDTO).collect(Collectors.toSet()));
     }
 }

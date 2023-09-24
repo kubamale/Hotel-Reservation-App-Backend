@@ -1,12 +1,11 @@
 package com.example.HotelReservation.Services;
 
+import com.example.HotelReservation.DTOs.AmenitiesDTO;
 import com.example.HotelReservation.DTOs.CreateHotelDTO;
 import com.example.HotelReservation.DTOs.HotelGetDTO;
 import com.example.HotelReservation.Exceptions.AppException;
-import com.example.HotelReservation.Models.Hotel;
-import com.example.HotelReservation.Models.Reservation;
-import com.example.HotelReservation.Models.Room;
-import com.example.HotelReservation.Models.User;
+import com.example.HotelReservation.Models.*;
+import com.example.HotelReservation.Repositories.AmenitiesReopsitory;
 import com.example.HotelReservation.Repositories.HotelRepository;
 import com.example.HotelReservation.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class HotelService {
 
+    @Autowired
+    AmenitiesReopsitory amenitiesReopsitory;
     @Autowired
     HotelRepository hotelRepository;
     @Autowired
@@ -59,7 +61,8 @@ public class HotelService {
             throw new AppException("No user with that Id " + hotelDTO.userId, HttpStatus.BAD_REQUEST);
         }
 
-        Hotel hotel = new Hotel(hotelDTO.country, hotelDTO.city, hotelDTO.postalCode, hotelDTO.street, hotelDTO.streetNumber, hotelDTO.phoneNumber, hotelDTO.email,hotelDTO.name, hotelDTO.description, hotelDTO.picURL, hotelDTO.amenities, oUser.get());
+        Set<Amenities> amenities = new HashSet<>(amenitiesReopsitory.findAllById(hotelDTO.amenities.stream().map(AmenitiesDTO::id).collect(Collectors.toSet())));
+        Hotel hotel = new Hotel(hotelDTO.country, hotelDTO.city, hotelDTO.postalCode, hotelDTO.street, hotelDTO.streetNumber, hotelDTO.phoneNumber, hotelDTO.email,hotelDTO.name, hotelDTO.description, hotelDTO.picURL, amenities, oUser.get());
         hotelRepository.save(hotel);
         return hotel;
     }
@@ -102,5 +105,9 @@ public class HotelService {
 
 
         return ResponseEntity.ok(hotels.stream().map(Hotel::mapToDTO).toList());
+    }
+
+    public ResponseEntity<List<AmenitiesDTO>> getAllAmenities() {
+        return ResponseEntity.ok(amenitiesReopsitory.findAll().stream().map(Amenities::mapToDTO).toList());
     }
 }

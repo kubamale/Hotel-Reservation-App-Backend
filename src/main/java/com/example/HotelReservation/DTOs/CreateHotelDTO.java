@@ -1,6 +1,9 @@
 package com.example.HotelReservation.DTOs;
 
+import com.example.HotelReservation.Models.Amenities;
+
 import java.util.List;
+import java.util.Set;
 
 public class CreateHotelDTO {
     public String country;
@@ -13,7 +16,7 @@ public class CreateHotelDTO {
     public String name;
     public String description;
     public List<String> picURL;
-    public List<String> amenities;
+    public Set<AmenitiesDTO> amenities;
     public long userId;
 
     public CreateHotelDTO() {

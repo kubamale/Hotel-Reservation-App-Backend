@@ -1,6 +1,8 @@
 package com.example.HotelReservation.Controllers;
 
+import com.example.HotelReservation.DTOs.AmenitiesDTO;
 import com.example.HotelReservation.DTOs.HotelGetDTO;
+import com.example.HotelReservation.Models.Amenities;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.DTOs.CreateHotelDTO;
 import com.example.HotelReservation.Services.HotelService;
@@ -46,6 +48,11 @@ public class HotelsController {
     @GetMapping("/user")
     public ResponseEntity<List<HotelGetDTO>> getUsersHotel(@RequestParam long id){
         return hotelService.getUsersHotels(id);
+    }
+
+    @GetMapping("amenities")
+    public ResponseEntity<List<AmenitiesDTO>> getAllAmenities(){
+        return hotelService.getAllAmenities();
     }
 
 }
