@@ -2,9 +2,11 @@ package com.example.HotelReservation.Controllers;
 
 import com.example.HotelReservation.DTOs.AmenitiesDTO;
 import com.example.HotelReservation.DTOs.HotelGetDTO;
+import com.example.HotelReservation.DTOs.RatingsDTO;
 import com.example.HotelReservation.Models.Amenities;
 import com.example.HotelReservation.Models.Hotel;
 import com.example.HotelReservation.DTOs.CreateHotelDTO;
+import com.example.HotelReservation.Models.Ratings;
 import com.example.HotelReservation.Services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +55,11 @@ public class HotelsController {
     @GetMapping("amenities")
     public ResponseEntity<List<AmenitiesDTO>> getAllAmenities(){
         return hotelService.getAllAmenities();
+    }
+
+    @PutMapping("/ratings")
+    public ResponseEntity<Ratings> addOpinion(@RequestBody RatingsDTO ratingsDTO){
+        return hotelService.addOpinion(ratingsDTO);
     }
 
 }

@@ -42,11 +42,13 @@ public class Hotel {
     public List<String> picURL;
     @ManyToMany
     public Set<Amenities> amenities;
-    @Column
-    public int ratings;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     public Set<Room> rooms;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    public Set<Ratings> ratings;
     @ManyToOne
     @JoinColumn(name = "User_Id")
     @JsonBackReference
@@ -78,6 +80,6 @@ public class Hotel {
     public static HotelGetDTO mapToDTO(Hotel hotel){
         return new HotelGetDTO(hotel.Id,hotel.country, hotel.city, hotel.postalCode,
                 hotel.street, hotel.streetNumber, hotel.phoneNumber, hotel.email,
-                hotel.name, hotel.description, hotel.picURL, hotel.amenities.stream().map(Amenities::mapToDTO).collect(Collectors.toSet()));
+                hotel.name, hotel.description, hotel.picURL, hotel.amenities.stream().map(Amenities::mapToDTO).collect(Collectors.toSet()), hotel.ratings.stream().map(Ratings::mapToDTO).collect(Collectors.toSet()));
     }
 }

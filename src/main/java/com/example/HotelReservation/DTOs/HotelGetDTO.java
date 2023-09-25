@@ -1,6 +1,7 @@
 package com.example.HotelReservation.DTOs;
 
 import com.example.HotelReservation.Models.Amenities;
+import com.example.HotelReservation.Models.Ratings;
 
 import java.util.List;
 import java.util.Set;
@@ -18,11 +19,12 @@ public class HotelGetDTO {
     public String description;
     public List<String> picURL;
     public Set<AmenitiesDTO> amenities;
+    public Set<RatingsDTO> ratings;
 
     public HotelGetDTO() {
     }
 
-    public HotelGetDTO(long id, String country, String city, String postalCode, String street, String streetNumber, String phoneNumber, String email, String name, String description, List<String> picURL, Set<AmenitiesDTO> amenities) {
+    public HotelGetDTO(long id, String country, String city, String postalCode, String street, String streetNumber, String phoneNumber, String email, String name, String description, List<String> picURL, Set<AmenitiesDTO> amenities, Set<RatingsDTO> ratings) {
         this.id = id;
         this.country = country;
         this.city = city;
@@ -35,5 +37,6 @@ public class HotelGetDTO {
         this.description = description;
         this.picURL = picURL;
         this.amenities = amenities;
+        this.ratings = ratings;
     }
 }

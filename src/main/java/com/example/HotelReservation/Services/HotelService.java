@@ -3,10 +3,12 @@ package com.example.HotelReservation.Services;
 import com.example.HotelReservation.DTOs.AmenitiesDTO;
 import com.example.HotelReservation.DTOs.CreateHotelDTO;
 import com.example.HotelReservation.DTOs.HotelGetDTO;
+import com.example.HotelReservation.DTOs.RatingsDTO;
 import com.example.HotelReservation.Exceptions.AppException;
 import com.example.HotelReservation.Models.*;
 import com.example.HotelReservation.Repositories.AmenitiesReopsitory;
 import com.example.HotelReservation.Repositories.HotelRepository;
+import com.example.HotelReservation.Repositories.RatingsRepository;
 import com.example.HotelReservation.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,8 @@ public class HotelService {
     HotelRepository hotelRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RatingsRepository ratingsRepository;
 
     public List<HotelGetDTO> getAllHotels() {
         return hotelRepository.findAll().stream().map(Hotel::mapToDTO).toList();
@@ -109,5 +113,20 @@ public class HotelService {
 
     public ResponseEntity<List<AmenitiesDTO>> getAllAmenities() {
         return ResponseEntity.ok(amenitiesReopsitory.findAll().stream().map(Amenities::mapToDTO).toList());
+    }
+
+    public ResponseEntity<Ratings> addOpinion(RatingsDTO ratingsDTO) {
+        System.out.println("==============" + ratingsDTO.hotelId() + " | " + ratingsDTO.userId());
+        Optional<User> oUser = userRepository.findById(ratingsDTO.userId());
+        Optional<Hotel> oHotel = hotelRepository.findById(ratingsDTO.hotelId());
+
+        if (oUser.isEmpty() || oHotel.isEmpty()){
+            throw new AppException("Wrong hotel or user", HttpStatus.BAD_REQUEST);
+        }
+
+        Ratings ratings = new Ratings(ratingsDTO.rating(), ratingsDTO.opinion(), ratingsDTO.date(), oHotel.get(), oUser.get());
+        ratingsRepository.save(ratings);
+
+        return ResponseEntity.ok(ratings);
     }
 }
