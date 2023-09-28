@@ -58,7 +58,7 @@ public class HotelsController {
     }
 
     @PutMapping("/ratings")
-    public ResponseEntity<Ratings> addOpinion(@RequestBody RatingsDTO ratingsDTO){
+    public ResponseEntity<RatingsDTO> addOpinion(@RequestBody RatingsDTO ratingsDTO){
         return hotelService.addOpinion(ratingsDTO);
     }
 

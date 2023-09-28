@@ -115,7 +115,7 @@ public class HotelService {
         return ResponseEntity.ok(amenitiesReopsitory.findAll().stream().map(Amenities::mapToDTO).toList());
     }
 
-    public ResponseEntity<Ratings> addOpinion(RatingsDTO ratingsDTO) {
+    public ResponseEntity<RatingsDTO> addOpinion(RatingsDTO ratingsDTO) {
         System.out.println("==============" + ratingsDTO.hotelId() + " | " + ratingsDTO.userId());
         Optional<User> oUser = userRepository.findById(ratingsDTO.userId());
         Optional<Hotel> oHotel = hotelRepository.findById(ratingsDTO.hotelId());
@@ -127,6 +127,6 @@ public class HotelService {
         Ratings ratings = new Ratings(ratingsDTO.rating(), ratingsDTO.opinion(), ratingsDTO.date(), oHotel.get(), oUser.get());
         ratingsRepository.save(ratings);
 
-        return ResponseEntity.ok(ratings);
+        return ResponseEntity.ok(Ratings.mapToDTO(ratings));
     }
 }
