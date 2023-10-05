@@ -37,12 +37,12 @@ public class HotelsController {
         return hotelService.getHotel(id);
     }
 
-    @PostMapping
+    @PostMapping()
     public Hotel addHotel(@RequestBody CreateHotelDTO hotelDTO){
         return hotelService.createNewHotel(hotelDTO);
     }
 
-    @DeleteMapping
+    @DeleteMapping()
     public String deleteHotel(@RequestParam Long hotelId){
         return hotelService.deleteHotel(hotelId);
     }

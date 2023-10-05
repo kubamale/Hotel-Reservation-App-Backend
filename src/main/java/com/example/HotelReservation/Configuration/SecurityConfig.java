@@ -32,9 +32,11 @@ public class SecurityConfig {
                 })
                 .addFilterAfter(new JwtAuthFilter(userAuthProvider), BasicAuthenticationFilter.class)
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((requests) ->
-                    requests.requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
-                            .anyRequest().authenticated()
+                .authorizeHttpRequests((requests) -> {
+                            requests.requestMatchers(HttpMethod.GET, "/hotels", "/hotels/**").permitAll();
+                            requests.requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
+                                    .anyRequest().authenticated();
+                        }
                 );
         return http.build();
     }
