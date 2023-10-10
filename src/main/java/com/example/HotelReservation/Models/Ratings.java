@@ -42,6 +42,6 @@ public class Ratings {
     }
 
     public static RatingsDTO mapToDTO(Ratings ratings){
-        return new RatingsDTO(ratings.rating, ratings.opinion, ratings.date, ratings.hotel.Id, ratings.user.getId());
+        return new RatingsDTO(ratings.rating, ratings.opinion, ratings.date, ratings.hotel.Id, ratings.user.getId(), ratings.user.getFirstName());
     }
 }
