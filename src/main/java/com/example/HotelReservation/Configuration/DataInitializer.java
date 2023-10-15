@@ -31,8 +31,11 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        SignUpDTO user = new SignUpDTO("User", "User", "user@ex.com", "password".toCharArray());
-        userService.register(user);
+        SignUpDTO admin = new SignUpDTO("User", "User", "admin@ex.com",Role.ADMIN ,"password".toCharArray());
+        var t =userService.register(admin);
+        SignUpDTO user = new SignUpDTO("User", "User", "user@ex.com",Role.MANAGER ,"password".toCharArray());
+        var t2 =userService.register(user);
+
         Set<Amenities> amenitiesSet = new HashSet<>(Arrays.asList(new Amenities("Swimming Pool", "assets/icons/swimming-pool.png"), new Amenities("Double Bed", "assets/icons/double-bed.png"),
                 new Amenities("Kitchen", "assets/icons/kitchen.png"),new Amenities("Beach", "assets/icons/beach.png"),new Amenities("Single Bed", "assets/icons/single-bed.png"),new Amenities("Restaurant", "assets/icons/restaurant.png")));
 
@@ -80,6 +83,9 @@ public class DataInitializer implements CommandLineRunner {
         roomRepository.save(room1);
         roomRepository.save(room2);
         reservationRepository.save(reservation);
+
+        System.out.println("Admin user Token: " + t.getToken());
+        System.out.println("Manager user Token: " + t2.getToken());
 
     }
 }
