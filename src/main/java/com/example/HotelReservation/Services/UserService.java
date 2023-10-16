@@ -1,10 +1,6 @@
 package com.example.HotelReservation.Services;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.HotelReservation.Configuration.UserAuthProvider;
+import com.example.HotelReservation.Configuration.JwtService;
 import com.example.HotelReservation.DTOs.CredentialsDTO;
 import com.example.HotelReservation.DTOs.SignUpDTO;
 import com.example.HotelReservation.DTOs.UserDTO;
@@ -16,12 +12,9 @@ import com.example.HotelReservation.Models.User;
 import com.example.HotelReservation.Repositories.TokenRepository;
 import com.example.HotelReservation.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Service;
 
 import java.nio.CharBuffer;
@@ -32,18 +25,23 @@ import java.util.Optional;
 public class UserService {
 
     private final EmailService emailService;
-    private final UserAuthProvider userAuthProvider;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final JwtService jwtService;
 
     public UserDTO login(CredentialsDTO credentialsDTO) throws RuntimeException {
         User user = userRepository.findByLogin(credentialsDTO.login())
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.UNAUTHORIZED));
 
         if (passwordEncoder.matches(CharBuffer.wrap(credentialsDTO.password()), user.getPassword())){
-            return userMapper.toUserDTO(user);
+            return UserDTO.builder()
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .login(user.getLogin())
+                    .id(user.getId())
+                    .token(jwtService.generateToken(user)).build();
 
         }
 
@@ -58,9 +56,15 @@ public class UserService {
 
         User user = userMapper.signUpToUser(signUpDTO);
         user.setPassword(passwordEncoder.encode(CharBuffer.wrap(signUpDTO.password())));
+        user.setRole(signUpDTO.role());
         User savedUser = userRepository.save(user);
         emailService.sendWelcomeEmail(savedUser);
-        return userMapper.toUserDTO(savedUser);
+        return UserDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .login(user.getLogin())
+                .id(user.getId())
+                .token(jwtService.generateToken(user)).build();
     }
 
     public ResponseEntity<String> logout(String token) {
