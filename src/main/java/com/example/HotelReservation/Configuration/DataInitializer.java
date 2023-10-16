@@ -41,11 +41,11 @@ public class DataInitializer implements CommandLineRunner {
         roleRepository.saveAll(Set.of(userr, adminr, hotelOwner));
 
 
-        SignUpDTO admin = new SignUpDTO("User", "User", "admin@ex.com", adminr ,"password".toCharArray());
+        SignUpDTO admin = new SignUpDTO("User", "User", "admin@ex.com", "ADMIN" ,"password".toCharArray());
         var registeredAdmin =userService.register(admin);
-        SignUpDTO hotelOwnerUser = new SignUpDTO("User", "User", "owner@ex.com", hotelOwner,"password".toCharArray());
+        SignUpDTO hotelOwnerUser = new SignUpDTO("User", "User", "owner@ex.com", "HOTEL_OWNER","password".toCharArray());
         var registeredHotelOwner =userService.register(hotelOwnerUser);
-        SignUpDTO user = new SignUpDTO("User", "User", "user@ex.com", userr,"password".toCharArray());
+        SignUpDTO user = new SignUpDTO("User", "User", "user@ex.com", "USER","password".toCharArray());
         var registeredUser =userService.register(user);
 
         Set<Amenities> amenitiesSet = new HashSet<>(Arrays.asList(new Amenities("Swimming Pool", "assets/icons/swimming-pool.png"), new Amenities("Double Bed", "assets/icons/double-bed.png"),

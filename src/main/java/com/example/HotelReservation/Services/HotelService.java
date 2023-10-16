@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -59,11 +61,14 @@ public class HotelService {
 
 
     public Hotel createNewHotel(CreateHotelDTO hotelDTO) {
-        Optional<User> oUser = userRepository.findById(hotelDTO.userId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> oUser = userRepository.findByLogin(authentication.getName());
 
-        if (oUser.isEmpty()){
-            throw new AppException("No user with that Id " + hotelDTO.userId, HttpStatus.BAD_REQUEST);
+
+        if ((oUser.isEmpty() ||  oUser.get().getId() != hotelDTO.userId && !oUser.get().getRole().getName().equals("ADMIN"))){
+            throw new AppException("Cant perform this action", HttpStatus.BAD_REQUEST);
         }
+
 
         Set<Amenities> amenities = new HashSet<>(amenitiesReopsitory.findAllById(hotelDTO.amenities.stream().map(AmenitiesDTO::id).collect(Collectors.toSet())));
         Hotel hotel = new Hotel(hotelDTO.country, hotelDTO.city, hotelDTO.postalCode, hotelDTO.street, hotelDTO.streetNumber, hotelDTO.phoneNumber, hotelDTO.email,hotelDTO.name, hotelDTO.description, hotelDTO.picURL, amenities, oUser.get());
@@ -72,18 +77,27 @@ public class HotelService {
     }
 
     public String deleteHotel(Long hotelId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+
         Optional<Hotel> hotel = hotelRepository.findById(hotelId);
 
-        if(hotel.isEmpty())
+        if(hotel.isEmpty()){
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "no hotel With that Id");
-        List<Reservation> reservationsToDelete = hotel.get().getRooms().stream().flatMap(room -> room.reservations.stream()).toList();
+        }
+
+        Optional<User> oUser = userRepository.findByLogin(authentication.getName());
+
+        if ((oUser.isEmpty() || !Objects.equals(oUser.get().getId(), hotel.get().getUser().getId())) && !oUser.get().getRole().getName().equals("ADMIN")) {
+            throw new AppException("You can't perform this action", HttpStatus.BAD_REQUEST);
+        }
+
         boolean hasReservation = false;
         for (Room room : hotel.get().getRooms()){
             if (!room.reservations.isEmpty()){
                 hasReservation = true;
                 break;
             }
-
         }
 
         if (hasReservation)
@@ -104,7 +118,13 @@ public class HotelService {
     }
 
     public ResponseEntity<List<HotelGetDTO>> getUsersHotels(long id) {
-        List<Hotel> hotels = hotelRepository.findAll().stream().filter((hotel) -> hotel.getUser().getId() == id).toList();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> oUser = userRepository.findByLogin(authentication.getName());
+        if ((oUser.isEmpty() || oUser.get().getId() != id) && !oUser.get().getRole().getName().equals("ADMIN")) {
+            throw new AppException("You can't perform this action ", HttpStatus.BAD_REQUEST);
+        }
+
+        List<Hotel> hotels = hotelRepository.findByUserId(id);
 
 
 
