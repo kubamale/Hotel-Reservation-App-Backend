@@ -1,46 +1,36 @@
 package com.example.HotelReservation.Models;
 
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
-public enum Role {
 
-    USER(Collections.emptySet()),
-    ADMIN(Set.of(
-            Permission.ADMIN_READ,
-            Permission.ADMIN_UPDATE,
-            Permission.ADMIN_CREATE,
-            Permission.ADMIN_DELETE,
-            Permission.MANAGER_READ,
-            Permission.MANAGER_UPDATE,
-            Permission.MANAGER_CREATE,
-            Permission.MANAGER_DELETE
-    )),
-    MANAGER(
-            Set.of(
-                    Permission.MANAGER_READ,
-                    Permission.MANAGER_UPDATE,
-                    Permission.MANAGER_CREATE,
-                    Permission.MANAGER_DELETE
-            )
-    )
-    ;
 
+@NoArgsConstructor
+@Entity
+@Table(name = "_role")
+public class Role {
+
+    @Id
+    @GeneratedValue
+    private Long Id;
     @Getter
-    private final Set<Permission> permissions;
+    @Column(name = "name", unique = true)
+    private String name;
+
+    @OneToMany(mappedBy = "role")
+    private Set<User> users;
 
     public List<SimpleGrantedAuthority> getAuthorities(){
-        var auth = getPermissions().stream().map( permission -> new SimpleGrantedAuthority(permission.getPermission()))
-                .collect(Collectors.toList());
-        auth.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
-        return auth;
+
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.name));
     }
 
+    public Role(String name) {
+        this.name = name;
+    }
 }

@@ -12,9 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.example.HotelReservation.Models.Permission.*;
-import static com.example.HotelReservation.Models.Role.ADMIN;
-import static com.example.HotelReservation.Models.Role.MANAGER;
+
 
 @Configuration
 @EnableWebSecurity
@@ -31,8 +29,13 @@ public class SecurityConfiguration {
                     req
                             .requestMatchers("/login", "/register")
                    .permitAll()
-                            .requestMatchers("/hotels").hasAnyRole(ADMIN.name(), MANAGER.name())
-                            .requestMatchers("/rooms").hasRole(ADMIN.name())
+                            .requestMatchers(HttpMethod.GET, "/hotels", "/hotels/date", "/hotels/details", "/hotels/amenities", "/rooms").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/hotels", "/rooms").hasAnyRole("ADMIN", "HOTEL_OWNER")
+                            .requestMatchers(HttpMethod.DELETE, "/hotels", "/rooms").hasAnyRole("ADMIN", "HOTEL_OWNER")
+                            .requestMatchers(HttpMethod.PUT, "/hotels").hasAnyRole("ADMIN", "HOTEL_OWNER", "USER")
+                            .requestMatchers("/users").hasAnyRole("ADMIN", "HOTEL_OWNER", "USER")
+                            .requestMatchers("/reservation").hasAnyRole("ADMIN", "HOTEL_OWNER", "USER")
+
                    .anyRequest().authenticated()
                )
                .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

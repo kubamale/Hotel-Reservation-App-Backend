@@ -28,36 +28,49 @@ public class DataInitializer implements CommandLineRunner {
     RoomRepository roomRepository;
     @Autowired
     ReservationRepository reservationRepository;
+    @Autowired
+    RoleRepository roleRepository;
 
     @Override
-    public void run(String... args) throws Exception {
-        SignUpDTO admin = new SignUpDTO("User", "User", "admin@ex.com",Role.ADMIN ,"password".toCharArray());
-        var t =userService.register(admin);
-        SignUpDTO user = new SignUpDTO("User", "User", "user@ex.com",Role.MANAGER ,"password".toCharArray());
-        var t2 =userService.register(user);
+    public void run(String... args){
+
+        Role userr = new Role("USER");
+        Role adminr = new Role("ADMIN");
+        Role hotelOwner = new Role("HOTEL_OWNER");
+
+        roleRepository.saveAll(Set.of(userr, adminr, hotelOwner));
+
+
+        SignUpDTO admin = new SignUpDTO("User", "User", "admin@ex.com", adminr ,"password".toCharArray());
+        var registeredAdmin =userService.register(admin);
+        SignUpDTO hotelOwnerUser = new SignUpDTO("User", "User", "owner@ex.com", hotelOwner,"password".toCharArray());
+        var registeredHotelOwner =userService.register(hotelOwnerUser);
+        SignUpDTO user = new SignUpDTO("User", "User", "user@ex.com", userr,"password".toCharArray());
+        var registeredUser =userService.register(user);
 
         Set<Amenities> amenitiesSet = new HashSet<>(Arrays.asList(new Amenities("Swimming Pool", "assets/icons/swimming-pool.png"), new Amenities("Double Bed", "assets/icons/double-bed.png"),
                 new Amenities("Kitchen", "assets/icons/kitchen.png"),new Amenities("Beach", "assets/icons/beach.png"),new Amenities("Single Bed", "assets/icons/single-bed.png"),new Amenities("Restaurant", "assets/icons/restaurant.png")));
 
         amenitiesReopsitory.saveAll(amenitiesSet);
-        Optional<User> oUser = userRepository.findByLogin(user.login());
+        Optional<User> oUser = userRepository.findByLogin(hotelOwnerUser.login());
         if (oUser.isEmpty()){
             throw new AppException("Error initializing user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        String desc = "W obiekcie Amicus przysługuje Ci zniżka Genius! Aby zaoszczędzić w tym obiekcie, wystarczy, że się zalogujesz.\n" +
-                "\n" +
-                "Usytuowany w spokojnej części Zakopanego obiekt Amicus oferuje ogród i plac zabaw dla dzieci w pobliżu głównych szlaków turystycznych.\n" +
-                "\n" +
-                "Pokoje są przestronne i jasne. Każdy z nich obejmuje łazienkę z prysznicem i wyposażony jest w telewizor z dostępem do kanałów telewizji satelitarnej. W pokojach można także korzystać z bezpłatnego bezprzewodowego dostępu do Internetu.\n" +
-                "\n" +
-                "Posiłki serwowane są w przestronnym i jasnym lokalu Grill Bar na parterze.\n" +
-                "\n" +
-                "Popularne Krupówki z barami i sklepami oddalone są od obiektu Amicus o 1,6 km, a wyciąg narciarski Pod Lipkami - o 1,7 km. Odległość od dworca kolejowego Zakopane wynosi 3,2 km. Na miejscu dostępny jest bezpłatny parking.\n" +
-                "\n" +
-                "Z autentycznych opinii naszych Gości wynika, że to ich ulubiona część miasta Zakopane.\n" +
-                "\n" +
-                "Parom bardzo się podoba ta lokalizacja – za pobyt dla 2 osób oceniają ją na 9,1";
+        String desc = """
+                W obiekcie Amicus przysługuje Ci zniżka Genius! Aby zaoszczędzić w tym obiekcie, wystarczy, że się zalogujesz.
+
+                Usytuowany w spokojnej części Zakopanego obiekt Amicus oferuje ogród i plac zabaw dla dzieci w pobliżu głównych szlaków turystycznych.
+
+                Pokoje są przestronne i jasne. Każdy z nich obejmuje łazienkę z prysznicem i wyposażony jest w telewizor z dostępem do kanałów telewizji satelitarnej. W pokojach można także korzystać z bezpłatnego bezprzewodowego dostępu do Internetu.
+
+                Posiłki serwowane są w przestronnym i jasnym lokalu Grill Bar na parterze.
+
+                Popularne Krupówki z barami i sklepami oddalone są od obiektu Amicus o 1,6 km, a wyciąg narciarski Pod Lipkami - o 1,7 km. Odległość od dworca kolejowego Zakopane wynosi 3,2 km. Na miejscu dostępny jest bezpłatny parking.
+
+                Z autentycznych opinii naszych Gości wynika, że to ich ulubiona część miasta Zakopane.
+
+                Parom bardzo się podoba ta lokalizacja – za pobyt dla 2 osób oceniają ją na 9,1""";
 
         Hotel hotel1 = new Hotel("Poland", "Warsaw", "01-000", "Znana", "134a", "+48999999999",
                 "exampleemail@exam.com","test1",desc ,
@@ -73,7 +86,7 @@ public class DataInitializer implements CommandLineRunner {
                         "https://www.hotel.bialowieza.pl/_thumb/650x500x80/banery/OPT-POKOJE%20BUSSINESS/3q1a3748.jpg")),amenitiesSet,oUser.get());
         Hotel hotel2 = new Hotel("Poland", "Warsaw", "01-000", "Znana", "134a",
                 "+48999999999", "exampleemail@exam.com","test2", "test2 des2",
-                new ArrayList<>(Arrays.asList("https://www.hotel.bialowieza.pl/_thumb/650x500x80/banery/OPT-POKOJE%20BUSSINESS/3q1a3748.jpg")),amenitiesSet, oUser.get());
+                new ArrayList<>(List.of("https://www.hotel.bialowieza.pl/_thumb/650x500x80/banery/OPT-POKOJE%20BUSSINESS/3q1a3748.jpg")),amenitiesSet, oUser.get());
 
         Room room1 = new Room( new ArrayList<>(Arrays.asList("equipment1", "equipment2", "equipment3")), 123.00, hotel1, 3);
         Room room2 = new Room( new ArrayList<>(Arrays.asList("equipment1", "equipment3")), 163.00, hotel2, 5);
@@ -84,8 +97,10 @@ public class DataInitializer implements CommandLineRunner {
         roomRepository.save(room2);
         reservationRepository.save(reservation);
 
-        System.out.println("Admin user Token: " + t.getToken());
-        System.out.println("Manager user Token: " + t2.getToken());
+        System.out.println("Admin user Token: " + registeredAdmin.getToken());
+        System.out.println("HotelOwner user Token: " + registeredHotelOwner.getToken());
+        System.out.println("User Token: " + registeredUser.getToken());
+
 
     }
 }
