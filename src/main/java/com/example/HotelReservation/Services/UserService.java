@@ -14,6 +14,7 @@ import com.example.HotelReservation.Repositories.RoleRepository;
 import com.example.HotelReservation.Repositories.TokenRepository;
 import com.example.HotelReservation.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.control.MappingControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -48,6 +49,7 @@ public class UserService {
                     .lastName(user.getLastName())
                     .login(user.getLogin())
                     .id(user.getId())
+                    .role(user.getRole().getName())
                     .token(jwtService.generateToken(user)).build();
 
         }
@@ -77,6 +79,7 @@ public class UserService {
                 .lastName(user.getLastName())
                 .login(user.getLogin())
                 .id(user.getId())
+                .role(savedUser.getRole().getName())
                 .token(jwtService.generateToken(user)).build();
     }
 
@@ -88,13 +91,24 @@ public class UserService {
 
 
     public ResponseEntity<UserDTO> getUserDetails(long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Optional<User> oUser = userRepository.findById(id);
 
-        if (oUser.isEmpty())
-            throw new AppException("no user with id " + id, HttpStatus.BAD_REQUEST);
+        Optional<User> oUser = userRepository.findByLogin(authentication.getName());
+        Optional<User> user;
+        if (oUser.isPresent()){
+            if (!oUser.get().getId().equals(id) && !oUser.get().getRole().getName().equals("ADMIN")){
+                throw new AppException("unauthorized " + oUser.get().getRole().getName(), HttpStatus.UNAUTHORIZED);
+            }
+        }
+        else {
+            throw new AppException("Wrong user", HttpStatus.BAD_REQUEST);
+        }
 
-        return ResponseEntity.ok(userMapper.toUserDTO(oUser.get()));
+        user = userRepository.findById(id);
+
+
+        return ResponseEntity.ok(userMapper.toUserDTO(user.get()));
     }
 
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -103,6 +117,7 @@ public class UserService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .login(user.getLogin())
+                .role(user.getRole().getName())
                 .build()).toList());
     }
 
